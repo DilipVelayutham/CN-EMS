@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icon-usr.png">
+    <title>Recommended | Evento</title>
+    <link rel="stylesheet" href="css/usr-dashboard.css">
+    <link rel="stylesheet" href="css/usr-recommended.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-calendar-alt"></i>
+                <h2>Evento</h2>
+            </div>
+        </div>
+
+        <div class="user-profile">
+            <div class="avatar">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="User">
+            </div>
+            <div class="user-info">
+                <h3>Alex Johnson</h3>
+            </div>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="usr-dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="usr-upcoming.html"><i class="fas fa-calendar-check"></i> Upcoming Events</a></li>
+            <li><a href="usr-past.html"><i class="fas fa-history"></i> Past Events</a></li>
+            <li><a href="usr-tickets.html"><i class="fas fa-ticket-alt"></i> My Tickets</a></li>
+            <li><a href="usr-bookmarks.html"><i class="fas fa-bookmark"></i> Bookmarks</a></li>
+            <li><a href="usr-recommended.html" class="active"><i class="fas fa-star"></i> Recommended</a></li>
+            <li><a href="usr-friends.html"><i class="fas fa-user-friends"></i> Friends</a></li>
+            <li><a href="usr-settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-stats">
+                <div class="stat-item">
+                    <span class="stat-value">24</span>
+                    <span class="stat-label">Matches</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">8</span>
+                    <span class="stat-label">Interests</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="page-title">
+                <h1>Recommended For You</h1>
+                <p id="currentDate">Monday, December 11, 2024</p>
+            </div>
+            
+            <div class="top-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search recommendations..." id="searchInput">
+                </div>
+                <button class="action-btn notification-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </button>
+                <button class="action-btn user-btn">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Recommendations Header -->
+        <div class="recommended-header">
+            <!-- Recommendation Stats -->
+            <div class="recommended-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="personalizedCount">24</h3>
+                        <p>Personalized Matches</p>
+                        <span class="trend up"><i class="fas fa-arrow-up"></i> 5 new</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="matchScore">92%</h3>
+                        <p>Avg. Match Score</p>
+                        <span class="trend up"><i class="fas fa-chart-line"></i> +3%</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="friendsAttending">18</h3>
+                        <p>Friends Attending</p>
+                        <span class="trend up"><i class="fas fa-user-plus"></i> +4</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="topInterests">8</h3>
+                        <p>Your Top Interests</p>
+                        <span class="trend stable"><i class="fas fa-star"></i> Strong</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendation Controls -->
+            <div class="recommended-controls">
+                <div class="controls-left">
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="matchFilter"><i class="fas fa-sliders-h"></i> Match:</label>
+                            <select id="matchFilter" class="filter-select">
+                                <option value="all">All Matches</option>
+                                <option value="high">High Match (90%+)</option>
+                                <option value="medium">Medium Match (70-89%)</option>
+                                <option value="friends">Friends Attending</option>
+                                <option value="trending">Trending Now</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="dateFilter"><i class="fas fa-calendar"></i> Date:</label>
+                            <select id="dateFilter" class="filter-select">
+                                <option value="all">Any Date</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="upcoming">Upcoming</option>
+                                <option value="weekend">Weekend</option>
+                            </select>
+                        </div>
+                        
+                        <button class="filter-reset" id="resetFilters">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="controls-right">
+                    <div class="action-buttons">
+                        <button class="action-btn-primary" id="refreshRecommendations">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="action-btn-secondary" id="managePreferences">
+                            <i class="fas fa-cog"></i> Preferences
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Recommendations Content -->
+        <div class="recommended-content">
+            <!-- Left Column - Recommendations -->
+            <div class="recommended-column">
+                <!-- Why These Recommendations -->
+                <div class="card insight-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-lightbulb"></i> Why These Recommendations?</h3>
+                        <button class="btn-insight-info" id="insightInfo">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="insight-content">
+                            <div class="insight-item">
+                                <div class="insight-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <div class="insight-details">
+                                    <h5>Based on Your History</h5>
+                                    <p>You've attended 5 tech events and rated them highly</p>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-icon">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                                <div class="insight-details">
+                                    <h5>Friends' Activity</h5>
+                                    <p>8 friends are attending similar events</p>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-icon">
+                                    <i class="fas fa-bookmark"></i>
+                                </div>
+                                <div class="insight-details">
+                                    <h5>Your Bookmarks</h5>
+                                    <p>You've shown interest in technology and music events</p>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-icon">
+                                    <i class="fas fa-trend-up"></i>
+                                </div>
+                                <div class="insight-details">
+                                    <h5>Trending in Your Area</h5>
+                                    <p>Popular events in New York this month</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personalized Recommendations -->
+                <div class="recommended-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-crown"></i> Top Picks For You</h3>
+                        <span class="section-badge">Best Matches</span>
+                    </div>
+                    
+                    <div class="recommendations-grid">
+                        <!-- Recommendation 1 -->
+                        <div class="recommendation-card high-match" data-match="95" data-category="tech" data-date="upcoming">
+                            <div class="recommendation-header">
+                                <div class="match-score">
+                                    <div class="score-circle">
+                                        <span class="score-value">95%</span>
+                                        <div class="score-ring">
+                                            <svg width="60" height="60">
+                                                <circle cx="30" cy="30" r="25" class="score-ring-bg"></circle>
+                                                <circle cx="30" cy="30" r="25" class="score-ring-fill" style="stroke-dasharray: 157, 157; stroke-dashoffset: 31.4;"></circle>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="match-label">Excellent Match</span>
+                                </div>
+                                <div class="recommendation-actions">
+                                    <button class="icon-btn quick-bookmark" title="Save for Later">
+                                        <i class="far fa-bookmark"></i>
+                                    </button>
+                                    <button class="icon-btn more-options" title="More Options">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendation-content">
+                                <div class="event-image">
+                                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop" alt="AI Conference">
+                                    <div class="event-category tech">
+                                        <i class="fas fa-robot"></i>
+                                        <span>Technology</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="event-details">
+                                    <h4>AI & Machine Learning Summit</h4>
+                                    <p class="event-description">
+                                        Cutting-edge AI conference featuring industry leaders, hands-on workshops, and networking opportunities.
+                                    </p>
+                                    
+                                    <div class="event-info">
+                                        <div class="info-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Jan 15, 2025 • 9:00 AM</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>Tech Convention Center</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-users"></i>
+                                            <span>800+ attending</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-tag"></i>
+                                            <span class="price">$299.00</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="match-reasons">
+                                        <h5>Why it's a good match:</h5>
+                                        <ul>
+                                            <li>Matches your interest in technology</li>
+                                            <li>Similar to events you've rated highly</li>
+                                            <li>5 friends are attending</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendation-footer">
+                                <div class="friends-attending">
+                                    <div class="friend-avatars">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mike" alt="Mike">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="John">
+                                        <span class="more-friends">+2</span>
+                                    </div>
+                                    <span class="friends-text">Friends attending</span>
+                                </div>
+                                <div class="recommendation-actions-full">
+                                    <button class="btn-book-now">
+                                        <i class="fas fa-shopping-cart"></i> Book Now
+                                    </button>
+                                    <button class="btn-view-details">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation 2 -->
+                        <div class="recommendation-card high-match" data-match="92" data-category="music" data-date="weekend">
+                            <div class="recommendation-header">
+                                <div class="match-score">
+                                    <div class="score-circle">
+                                        <span class="score-value">92%</span>
+                                        <div class="score-ring">
+                                            <svg width="60" height="60">
+                                                <circle cx="30" cy="30" r="25" class="score-ring-bg"></circle>
+                                                <circle cx="30" cy="30" r="25" class="score-ring-fill" style="stroke-dasharray: 157, 157; stroke-dashoffset: 44.0;"></circle>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="match-label">Great Match</span>
+                                </div>
+                                <div class="recommendation-actions">
+                                    <button class="icon-btn quick-bookmark" title="Save for Later">
+                                        <i class="far fa-bookmark"></i>
+                                    </button>
+                                    <button class="icon-btn more-options" title="More Options">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendation-content">
+                                <div class="event-image">
+                                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=250&fit=crop" alt="Indie Music Festival">
+                                    <div class="event-category music">
+                                        <i class="fas fa-music"></i>
+                                        <span>Music</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="event-details">
+                                    <h4>Indie Music Festival 2025</h4>
+                                    <p class="event-description">
+                                        Discover emerging artists across multiple stages featuring indie, alternative, and experimental music.
+                                    </p>
+                                    
+                                    <div class="event-info">
+                                        <div class="info-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Jan 18-19, 2025 • 4:00 PM</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>Riverside Park</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-users"></i>
+                                            <span>1200+ attending</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-tag"></i>
+                                            <span class="price">$89.00</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="match-reasons">
+                                        <h5>Why it's a good match:</h5>
+                                        <ul>
+                                            <li>Matches your music preferences</li>
+                                            <li>Weekend event fits your schedule</li>
+                                            <li>Trending in your city</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendation-footer">
+                                <div class="friends-attending">
+                                    <div class="friend-avatars">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=David" alt="David">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa" alt="Lisa">
+                                        <span class="more-friends">+3</span>
+                                    </div>
+                                    <span class="friends-text">Friends attending</span>
+                                </div>
+                                <div class="recommendation-actions-full">
+                                    <button class="btn-book-now">
+                                        <i class="fas fa-shopping-cart"></i> Book Now
+                                    </button>
+                                    <button class="btn-view-details">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation 3 -->
+                        <div class="recommendation-card medium-match" data-match="85" data-category="food" data-date="month">
+                            <div class="recommendation-header">
+                                <div class="match-score">
+                                    <div class="score-circle">
+                                        <span class="score-value">85%</span>
+                                        <div class="score-ring">
+                                            <svg width="60" height="60">
+                                                <circle cx="30" cy="30" r="25" class="score-ring-bg"></circle>
+                                                <circle cx="30" cy="30" r="25" class="score-ring-fill" style="stroke-dasharray: 157, 157; stroke-dashoffset: 62.8;"></circle>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="match-label">Good Match</span>
+                                </div>
+                                <div class="recommendation-actions">
+                                    <button class="icon-btn quick-bookmark" title="Save for Later">
+                                        <i class="far fa-bookmark"></i>
+                                    </button>
+                                    <button class="icon-btn more-options" title="More Options">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendation-content">
+                                <div class="event-image">
+                                    <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=400&h=250&fit=crop" alt="Wine Tasting">
+                                    <div class="event-category food">
+                                        <i class="fas fa-wine-glass-alt"></i>
+                                        <span>Food & Drink</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="event-details">
+                                    <h4>Artisanal Wine Tasting Experience</h4>
+                                    <p class="event-description">
+                                        Exclusive wine tasting featuring rare vintages from boutique vineyards with expert sommeliers.
+                                    </p>
+                                    
+                                    <div class="event-info">
+                                        <div class="info-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Jan 22, 2025 • 7:00 PM</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>Vintage Cellar</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-users"></i>
+                                            <span>60+ attending</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-tag"></i>
+                                            <span class="price">$125.00</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="match-reasons">
+                                        <h5>Why it's a good match:</h5>
+                                        <ul>
+                                            <li>Based on your food festival attendance</li>
+                                            <li>Exclusive event with limited tickets</li>
+                                            <li>Matches your premium event preference</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="recommendation-footer">
+                                <div class="friends-attending">
+                                    <div class="friend-avatars">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma" alt="Emma">
+                                        <span class="more-friends">+1</span>
+                                    </div>
+                                    <span class="friends-text">Friends attending</span>
+                                </div>
+                                <div class="recommendation-actions-full">
+                                    <button class="btn-book-now">
+                                        <i class="fas fa-shopping-cart"></i> Book Now
+                                    </button>
+                                    <button class="btn-view-details">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Load More -->
+                    <div class="load-more-container">
+                        <button class="btn-load-more" id="loadMoreRecommendations">
+                            <i class="fas fa-plus-circle"></i> Load More Recommendations
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="recommended-column">
+                <!-- Your Interests Profile -->
+                <div class="card profile-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-circle"></i> Your Interests Profile</h3>
+                        <button class="btn-edit-profile" id="editProfile">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-score">
+                            <div class="profile-score-circle">
+                                <span class="score-value">92%</span>
+                                <div class="score-ring">
+                                    <svg width="100" height="100">
+                                        <circle cx="50" cy="50" r="40" class="score-ring-bg"></circle>
+                                        <circle cx="50" cy="50" r="40" class="score-ring-fill" style="stroke-dasharray: 251.2, 251.2; stroke-dashoffset: 50.24;"></circle>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="profile-score-info">
+                                <h4>Profile Strength</h4>
+                                <p>Strong profile leads to better recommendations</p>
+                                <button class="btn-improve-profile">
+                                    <i class="fas fa-chart-line"></i> Improve Profile
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="interests-tags">
+                            <h5>Your Top Interests</h5>
+                            <div class="tags-grid">
+                                <div class="interest-tag active">
+                                    <i class="fas fa-laptop-code"></i>
+                                    <span>Technology</span>
+                                    <span class="tag-strength">Strong</span>
+                                </div>
+                                <div class="interest-tag active">
+                                    <i class="fas fa-music"></i>
+                                    <span>Music</span>
+                                    <span class="tag-strength">Strong</span>
+                                </div>
+                                <div class="interest-tag active">
+                                    <i class="fas fa-utensils"></i>
+                                    <span>Food & Drink</span>
+                                    <span class="tag-strength">Medium</span>
+                                </div>
+                                <div class="interest-tag">
+                                    <i class="fas fa-palette"></i>
+                                    <span>Arts</span>
+                                    <span class="tag-strength">Light</span>
+                                </div>
+                                <div class="interest-tag">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Business</span>
+                                    <span class="tag-strength">Light</span>
+                                </div>
+                                <div class="interest-tag">
+                                    <i class="fas fa-futbol"></i>
+                                    <span>Sports</span>
+                                    <span class="tag-strength">None</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Friends' Recommendations -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-friends"></i> Friends Also Like</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="friends-recommendations">
+                            <div class="friend-recommendation">
+                                <div class="friend-avatar">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mike" alt="Mike">
+                                </div>
+                                <div class="friend-info">
+                                    <h5>Mike Ross</h5>
+                                    <p class="friend-event">Booked: Tech Conference</p>
+                                    <div class="friend-match">
+                                        <i class="fas fa-star"></i>
+                                        <span>85% match with you</span>
+                                    </div>
+                                </div>
+                                <button class="btn-follow-event">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="friend-recommendation">
+                                <div class="friend-avatar">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah">
+                                </div>
+                                <div class="friend-info">
+                                    <h5>Sarah Chen</h5>
+                                    <p class="friend-event">Interested: Music Festival</p>
+                                    <div class="friend-match">
+                                        <i class="fas fa-star"></i>
+                                        <span>92% match with you</span>
+                                    </div>
+                                </div>
+                                <button class="btn-follow-event">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="friend-recommendation">
+                                <div class="friend-avatar">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=David" alt="David">
+                                </div>
+                                <div class="friend-info">
+                                    <h5>David Kim</h5>
+                                    <p class="friend-event">Attended: Food Festival</p>
+                                    <div class="friend-match">
+                                        <i class="fas fa-star"></i>
+                                        <span>78% match with you</span>
+                                    </div>
+                                </div>
+                                <button class="btn-follow-event">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trending Now -->
+                <div class="card trending-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-fire"></i> Trending Now</h3>
+                        <span class="trending-badge">HOT</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="trending-events">
+                            <div class="trending-event">
+                                <div class="trending-rank">
+                                    <span class="rank-number">1</span>
+                                </div>
+                                <div class="trending-details">
+                                    <h5>Web3 Conference</h5>
+                                    <p class="trending-stats">
+                                        <i class="fas fa-users"></i> 450+ booked this week
+                                    </p>
+                                </div>
+                                <div class="trending-match">
+                                    <span class="match-percent">88%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="trending-event">
+                                <div class="trending-rank">
+                                    <span class="rank-number">2</span>
+                                </div>
+                                <div class="trending-details">
+                                    <h5>Yoga & Wellness Retreat</h5>
+                                    <p class="trending-stats">
+                                        <i class="fas fa-users"></i> 320+ booked this week
+                                    </p>
+                                </div>
+                                <div class="trending-match">
+                                    <span class="match-percent">75%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="trending-event">
+                                <div class="trending-rank">
+                                    <span class="rank-number">3</span>
+                                </div>
+                                <div class="trending-details">
+                                    <h5>Startup Pitch Night</h5>
+                                    <p class="trending-stats">
+                                        <i class="fas fa-users"></i> 280+ booked this week
+                                    </p>
+                                </div>
+                                <div class="trending-match">
+                                    <span class="match-percent">82%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendation Tips -->
+                <div class="card tips-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-tips"></i> Improve Recommendations</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="tip-item">
+                            <div class="tip-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h5>Rate More Events</h5>
+                                <p>Rate past events to improve your profile accuracy.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item">
+                            <div class="tip-icon">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h5>Bookmark Interests</h5>
+                                <p>Save events you're interested in for better matches.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item">
+                            <div class="tip-icon">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h5>Connect Friends</h5>
+                                <p>More friends mean better social recommendations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-card">
+                    <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+                    <div class="quick-action-buttons">
+                        <button class="quick-action-btn" id="discoverSimilar">
+                            <i class="fas fa-compass"></i>
+                            <span>Discover Similar</span>
+                        </button>
+                        <button class="quick-action-btn" id="saveSearch">
+                            <i class="fas fa-search"></i>
+                            <span>Save Search</span>
+                        </button>
+                        <button class="quick-action-btn" id="getAlerts">
+                            <i class="fas fa-bell"></i>
+                            <span>Get Alerts</span>
+                        </button>
+                        <button class="quick-action-btn" id="shareProfile">
+                            <i class="fas fa-share-alt"></i>
+                            <span>Share Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-state-content">
+                <i class="fas fa-star"></i>
+                <h3>No Recommendations Yet</h3>
+                <p>We need to learn more about your interests to provide personalized recommendations. Start by attending events or updating your profile!</p>
+                <button class="btn-primary" id="updateProfileBtn">
+                    <i class="fas fa-user-edit"></i> Update Profile
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Recommendation Stats</h4>
+                    <div class="footer-stats">
+                        <div class="footer-stat">
+                            <span class="value" id="footerMatches">24</span>
+                            <span class="label">Matches</span>
+                        </div>
+                        <div class="footer-stat">
+                            <span class="value" id="footerMatchScore">92%</span>
+                            <span class="label">Match Score</span>
+                        </div>
+                        <div class="footer-stat">
+                            <span class="value" id="footerFriends">18</span>
+                            <span class="label">Friends</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Evento</h4>
+                    <p>Your gateway to amazing experiences</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Evento. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="close-notifications" id="closeNotifications">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-list">
+            <div class="notification-item unread">
+                <div class="notification-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>New Recommendations</h4>
+                    <p>5 new events match your interests</p>
+                    <span class="notification-time">2 hours ago</span>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Friends Activity</h4>
+                    <p>Sarah booked tickets for Music Festival</p>
+                    <span class="notification-time">5 hours ago</span>
+                </div>
+            </div>
+        </div>
+        <div class="notification-footer">
+            <button class="mark-all-read" id="markAllRead">
+                <i class="fas fa-check-double"></i>
+                Mark All as Read
+            </button>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-content event-modal">
+            <div class="modal-header">
+                <h3 id="modalEventTitle">Event Details</h3>
+                <button class="modal-close" id="closeEventModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalEventContent">
+                <!-- Filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Preferences Modal -->
+    <div class="modal-overlay" id="preferencesModal">
+        <div class="modal-content preferences-modal">
+            <div class="modal-header">
+                <h3>Recommendation Preferences</h3>
+                <button class="modal-close" id="closePreferencesModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="preferences-form">
+                    <div class="preference-section">
+                        <h4>Interests</h4>
+                        <p>Select categories you're interested in:</p>
+                        <div class="preference-tags">
+                            <label class="preference-tag">
+                                <input type="checkbox" checked>
+                                <span class="tag-content">
+                                    <i class="fas fa-laptop-code"></i> Technology
+                                </span>
+                            </label>
+                            <label class="preference-tag">
+                                <input type="checkbox" checked>
+                                <span class="tag-content">
+                                    <i class="fas fa-music"></i> Music
+                                </span>
+                            </label>
+                            <label class="preference-tag">
+                                <input type="checkbox" checked>
+                                <span class="tag-content">
+                                    <i class="fas fa-utensils"></i> Food & Drink
+                                </span>
+                            </label>
+                            <label class="preference-tag">
+                                <input type="checkbox">
+                                <span class="tag-content">
+                                    <i class="fas fa-palette"></i> Arts
+                                </span>
+                            </label>
+                            <label class="preference-tag">
+                                <input type="checkbox">
+                                <span class="tag-content">
+                                    <i class="fas fa-briefcase"></i> Business
+                                </span>
+                            </label>
+                            <label class="preference-tag">
+                                <input type="checkbox">
+                                <span class="tag-content">
+                                    <i class="fas fa-futbol"></i> Sports
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-section">
+                        <h4>Price Range</h4>
+                        <div class="price-range">
+                            <div class="range-slider">
+                                <input type="range" min="0" max="500" value="200" class="slider" id="priceRange">
+                            </div>
+                            <div class="range-values">
+                                <span>$0</span>
+                                <span id="currentPrice">$200</span>
+                                <span>$500+</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-section">
+                        <h4>Distance</h4>
+                        <div class="distance-options">
+                            <label class="distance-option">
+                                <input type="radio" name="distance" value="5" checked>
+                                <span class="option-content">Within 5 miles</span>
+                            </label>
+                            <label class="distance-option">
+                                <input type="radio" name="distance" value="10">
+                                <span class="option-content">Within 10 miles</span>
+                            </label>
+                            <label class="distance-option">
+                                <input type="radio" name="distance" value="25">
+                                <span class="option-content">Within 25 miles</span>
+                            </label>
+                            <label class="distance-option">
+                                <input type="radio" name="distance" value="any">
+                                <span class="option-content">Any distance</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-section">
+                        <h4>Notification Settings</h4>
+                        <div class="notification-options">
+                            <label class="notification-option">
+                                <input type="checkbox" checked>
+                                <span class="option-content">New recommendations</span>
+                            </label>
+                            <label class="notification-option">
+                                <input type="checkbox" checked>
+                                <span class="option-content">Friend activities</span>
+                            </label>
+                            <label class="notification-option">
+                                <input type="checkbox">
+                                <span class="option-content">Price drops</span>
+                            </label>
+                            <label class="notification-option">
+                                <input type="checkbox" checked>
+                                <span class="option-content">Trending events</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn-cancel" id="cancelPreferences">Cancel</button>
+                        <button class="btn-save" id="savePreferences">Save Preferences</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/usr-dashboard.js"></script>
+    <script src="js/usr-recommended.js"></script>
+</body>
+</html>
