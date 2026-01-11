@@ -163,21 +163,29 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Navigation menu items
         const navLinks = document.querySelectorAll('.nav-menu a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (!this.classList.contains('active')) {
-                    e.preventDefault();
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                    showNotification(`Loading: ${this.textContent}`);
-                    
-                    // Close sidebar on mobile after clicking a link
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('active');
-                    }
-                }
+
+            navLinks.forEach(link => {
+            link.addEventListener('click', function () {
+
+            // Remove active from all links
+            navLinks.forEach(l => l.classList.remove('active'));
+
+            // Add active to clicked link
+            this.classList.add('active');
+
+            // Optional popup message
+            showNotification(`Opening: ${this.textContent}`);
             });
         });
+        const currentPage = location.pathname.split('/').pop();
+
+            navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+        });
+
+
         
         // View all links
         const viewAllLinks = document.querySelectorAll('.view-all');
