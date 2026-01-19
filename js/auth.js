@@ -1,3 +1,5 @@
+import { apiRequest } from './api.js';
+
 // Authentication Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     // Elements
@@ -275,99 +277,89 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Form submission
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        const submitBtn = this.querySelector('.submit-btn');
-        
-        // Validate
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value;
-        
+        const submitBtn = this.querySelector(".submit-btn");
+        submitBtn.classList.add("loading");
+
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
         if (!email || !password) {
-            showError('Please fill in all fields');
+            submitBtn.classList.remove("loading");
+            showError("Please fill in all fields");
             return;
         }
-        
-        if (!validateEmail(email)) {
-            showError('Please enter a valid email address');
-            return;
+
+        try {
+            const result = await apiRequest("/auth/login", "POST", {
+                email,
+                password
+            });
+
+            submitBtn.classList.remove("loading");
+
+            if (!result.success) {
+                showError(result.message || "Invalid credentials");
+                return;
+            }
+
+            // Store session info
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("role", result.role);
+            localStorage.setItem("userId", result.userId);
+
+            showSuccess("Login successful!");
+
+            // Role-based redirect
+            if (result.role === "ORGANIZER") {
+                window.location.href = "org-dashboard.html";
+            } else {
+                window.location.href = "usr-dashboard.html";
+            }
+
+        } catch (error) {
+        submitBtn.classList.remove("loading");
+        showError("Server error. Please try again.");
         }
-        
-        // Simulate login process
-        submitBtn.classList.add('loading');
-        
-        setTimeout(() => {
-            submitBtn.classList.remove('loading');
-            showSuccess('Login successful! Redirecting to dashboard...');
-            
-            // Redirect after delay
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
-        }, 1500);
     });
     
-    signupForm.addEventListener('submit', function(e) {
+    signupForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        const submitBtn = this.querySelector('.submit-btn');
-        
-        // Validate all fields
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
-        const phone = document.getElementById('phoneNumber').value.trim();
-        const password = document.getElementById('signupPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        const organization = document.getElementById('organization').value.trim();
-        const role = userRoleInput.value;
-        const terms = document.getElementById('termsAgree').checked;
-        
-        // Basic validation
-        if (!firstName || !lastName || !email || !phone || !password || !confirmPassword || !terms) {
-            showError('Please fill in all required fields');
-            return;
+        const submitBtn = this.querySelector(".submit-btn");
+        submitBtn.classList.add("loading");
+
+        const payload = {
+            firstName: document.getElementById("firstName").value.trim(),
+            lastName: document.getElementById("lastName").value.trim(),
+            email: document.getElementById("signupEmail").value.trim(),
+            phone: document.getElementById("countryCode").value +
+               document.getElementById("phoneNumber").value.trim(),
+            password: document.getElementById("signupPassword").value,
+            role: userRoleInput.value,
+            organization: document.getElementById("organization").value.trim()
+        };
+
+        try {
+            const result = await apiRequest("/auth/register", "POST", payload);
+            submitBtn.classList.remove("loading");
+
+            if (!result.success) {
+                showError(result.message || "Signup failed");
+                return;
+            }
+
+            successMessage.textContent =
+                `Your ${payload.role} account has been created successfully!`;
+                successModal.classList.add("show");
+
+        } catch (error) {
+            submitBtn.classList.remove("loading");
+            showError("Server error during signup");
         }
-        
-        if (!validateEmail(email)) {
-            showError('Please enter a valid email address');
-            return;
-        }
-        
-        if (!validatePhone(phone)) {
-            showError('Please enter a valid phone number');
-            return;
-        }
-        
-        if (!validatePassword(password)) {
-            showError('Password does not meet requirements');
-            return;
-        }
-        
-        if (password !== confirmPassword) {
-            showError('Passwords do not match');
-            return;
-        }
-        
-        if (role === 'organizer' && !organization) {
-            showError('Organization name is required for organizers');
-            return;
-        }
-        
-        // Simulate signup process
-        submitBtn.classList.add('loading');
-        
-        setTimeout(() => {
-            submitBtn.classList.remove('loading');
-            
-            // Show success modal with personalized message
-            const roleText = role === 'organizer' ? 'Organizer' : 'Attendee';
-            successMessage.textContent = `Your ${roleText} account has been created successfully! AWS infrastructure is being provisioned...`;
-            successModal.classList.add('show');
-            
-            // Animate modal stats
-            animateModalStats();
-        }, 2000);
     });
+
+    
     
     // Continue to dashboard
     continueBtn.addEventListener('click', function() {
