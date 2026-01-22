@@ -1,0 +1,23 @@
+# Node dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Serverless build output
+.serverless/
+
+# AWS credentials
+.aws/
+
+# Logs
+*.log
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Build output (optional)
+dist/
+build/

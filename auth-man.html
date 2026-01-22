@@ -951,6 +951,8 @@
         const passwordStrength = document.getElementById('passwordStrength');
         const passwordStrengthText = document.getElementById('passwordStrengthText');
 
+        const API_BASE_URL = "https://wzer1y5y48.execute-api.eu-north-1.amazonaws.com/dev";
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             initAuthSystem();
@@ -1212,87 +1214,73 @@
         }
 
         // Handle login
-        function handleLogin(e) {
-            e.preventDefault();
-            clearErrors();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-            
-            let isValid = true;
-            
-            if (!validateEmail(document.getElementById('loginEmail'))) isValid = false;
-            if (!validateRequired(document.getElementById('loginPassword'))) isValid = false;
-            
-            if (isValid) {
-                // Show loading
-                loginBtn.innerHTML = '';
-                loginBtn.classList.add('btn-loading');
-                
-                // Simulate API call
-                setTimeout(() => {
-                    loginBtn.classList.remove('btn-loading');
-                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-                    
-                    // Demo login - always success with demo credentials
-                    showNotification('Login successful! Redirecting to dashboard...', 'success');
-                    
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = 'index-man.html';
-                    }, 1500);
-                }, 1500);
-            }
-        }
+        async function handleLogin(e) {
+  e.preventDefault();
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    const res = await fetch(API_BASE_URL + "/admin/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      showNotification(data.message || "Login failed", "error");
+      return;
+    }
+
+    localStorage.setItem("adminToken", data.token);
+    localStorage.setItem("adminRole", "ADMIN");
+
+    showNotification("Admin login successful", "success");
+
+    setTimeout(() => {
+      window.location.href = "man-dashboard.html";
+    }, 800);
+
+  } catch (err) {
+    showNotification("Server error. Please try again.", "error");
+  }
+}
+
+
 
         // Handle signup
-        function handleSignup(e) {
-            e.preventDefault();
-            clearErrors();
-            
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = signupPassword.value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const organization = document.getElementById('organization').value;
-            const agreeTerms = document.getElementById('agreeTerms').checked;
-            
-            let isValid = true;
-            
-            if (!validateRequired(document.getElementById('signupName'))) isValid = false;
-            if (!validateEmail(document.getElementById('signupEmail'))) isValid = false;
-            if (!validatePassword(signupPassword)) isValid = false;
-            if (!validateConfirmPassword(document.getElementById('confirmPassword'))) isValid = false;
-            
-            // Check terms agreement
-            if (!agreeTerms) {
-                showError('terms', 'You must agree to the terms and conditions');
-                isValid = false;
-            }
-            
-            if (isValid) {
-                // Show loading
-                signupBtn.innerHTML = '';
-                signupBtn.classList.add('btn-loading');
-                
-                // Simulate API call
-                setTimeout(() => {
-                    signupBtn.classList.remove('btn-loading');
-                    signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-                    
-                    // Show success message
-                    showNotification('Account created successfully! Please check your email for verification.', 'success');
-                    
-                    // Switch to login form
-                    setTimeout(() => {
-                        switchForm('login');
-                        // Pre-fill email
-                        document.getElementById('loginEmail').value = email;
-                    }, 2000);
-                }, 1500);
-            }
-        }
+        async function handleSignup(e) {
+  e.preventDefault();
+
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+
+  try {
+    const res = await fetch(API_BASE_URL + "/admin/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      showNotification(data.message, "error");
+      return;
+    }
+
+    showNotification("Admin account created. Please login.", "success");
+
+    setTimeout(() => {
+      switchForm("login");
+    }, 1000);
+
+  } catch (err) {
+    showNotification("Server error. Try again.", "error");
+  }
+}
 
         // Handle Google auth
         function handleGoogleAuth() {

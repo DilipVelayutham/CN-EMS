@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000"; 
+const API_BASE_URL = "https://wzer1y5y48.execute-api.eu-north-1.amazonaws.com/dev"; 
 // later → API Gateway URL
 
 export async function apiRequest(endpoint, method = "GET", body = null) {

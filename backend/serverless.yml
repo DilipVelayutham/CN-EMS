@@ -1,0 +1,44 @@
+service: evento-auth-service
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-north-1
+  environment:
+    DYNAMO_TABLE: EventoUsers
+    ADMIN_TABLE: EventoAdmins
+    JWT_SECRET: evento_super_secret_key
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:Scan
+          Resource: 
+            - arn:aws:dynamodb:eu-north-1:*:table/EventoUsers
+            - arn:aws:dynamodb:eu-north-1:*:table/EventoAdmins
+
+functions:
+  adminAuth:
+    handler: src/handler.handler
+    events:
+      - http:
+          path: admin/auth/login
+          method: post
+          cors: true
+      - http:
+          path: admin/auth/register
+          method: post
+          cors: true
+  auth:
+    handler: src/handler.handler
+    events:
+      - http:
+          path: auth/register
+          method: post
+          cors: true
+      - http:
+          path: auth/login
+          method: post
+          cors: true
