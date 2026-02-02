@@ -174,21 +174,6 @@ header {
     color: var(--sky-blue-600);
 }
 
-.nav-link:after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--sky-blue-400), var(--accent-teal));
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover:after {
-    width: 100%;
-}
-
 .nav-btns {
     display: flex;
     gap: 16px;
@@ -380,6 +365,7 @@ header {
 
 .dashboard-container {
     position: relative;
+    perspective: 1200px;
 }
 
 .dashboard-screen {

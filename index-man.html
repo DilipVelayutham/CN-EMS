@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <base href="./">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/icon-man.png">
@@ -76,7 +75,7 @@
             align-items: center;
             justify-content: center;
             padding: 14px 32px;
-            border-radius: var(--radius-md);
+            border-radius: 50px;
             font-weight: 600;
             font-size: 16px;
             text-decoration: none;
@@ -180,7 +179,7 @@
             align-items: center;
         }
 
-        .nav-menu a {
+        .nav-menu a:not(.btn) {
             color: var(--text-primary);
             text-decoration: none;
             font-weight: 500;
@@ -189,11 +188,11 @@
             position: relative;
         }
 
-        .nav-menu a:hover {
+        .nav-menu a:hover:not(.btn) {
             color: var(--primary-color);
         }
 
-        .nav-menu a::after {
+        .nav-menu a::after:not(.btn) {
             content: '';
             position: absolute;
             bottom: -5px;
@@ -204,7 +203,7 @@
             transition: var(--transition);
         }
 
-        .nav-menu a:hover::after {
+        .nav-menu a:hover::after:not(.btn) {
             width: 100%;
         }
 
@@ -927,6 +926,49 @@
         .floating {
             animation: float 3s ease-in-out infinite;
         }
+
+        /* ===== Back To Top Button ===== */
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+
+            /* match admin purple theme */
+            background: var(--gradient-primary);
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 18px;
+
+            opacity: 0;
+            visibility: hidden;
+
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
+            transition: all 0.3s ease;
+
+            z-index: 999;
+        }
+
+        /* visible state */
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* hover effect */
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -947,7 +989,6 @@
                 <a href="#features">Features</a>
                 <a href="#dashboard">Dashboard</a>
                 <a href="#testimonials">Testimonials</a>
-                <a href="#pricing">Pricing</a>
                 <a href="#contact">Contact</a>
                 <a href="auth-man.html" class="btn btn-primary">
                     <i class="fas fa-sign-in-alt"></i>
@@ -1339,6 +1380,11 @@
         </div>
     </footer>
 
+    <!-- Back To Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
     <script>
         // Header scroll effect
         window.addEventListener('scroll', function() {
@@ -1437,6 +1483,28 @@
                 }
             });
         });
+
+        // Back To Top
+        const backToTop = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+            });
+        });
+
     </script>
+
+    
+
 </body>
 </html>
