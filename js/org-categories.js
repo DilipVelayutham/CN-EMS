@@ -1,6 +1,15 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+    
+        const profileName = document.getElementById("profileName");
+        profileName.textContent = payload.name || payload.email || "User";
+
+    }
     // Elements
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const sidebar = document.getElementById('sidebar');

@@ -1,5 +1,28 @@
+const API_BASE = "http://localhost:3000";
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "auth.html";
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+
+    const editEventId = localStorage.getItem("editEventId");
+
+    if (editEventId) {
+        loadEventForEditing(editEventId);
+    }
+    
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+    
+        const profileName = document.getElementById("profileName");
+        profileName.textContent = payload.name || payload.email || "User";
+
+    }
     
     // Elements
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
@@ -323,6 +346,39 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('[data-next="4"]').addEventListener('click', updateReview);
     }
     
+    async function loadEventForEditing(eventId) {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("http://localhost:3000/organizer/events", {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+
+        const data = await response.json();
+        const event = data.events.find(e => e.eventId === eventId);
+
+        if (!event) return;
+
+        // Fill form fields
+        eventTitle.value = event.title;
+        eventDescription.value = event.description;
+        eventCategory.value = event.category;
+        eventLocation.value = event.location;
+
+        if (event.date) {
+            const parts = event.date.split(" ");
+            startDate.value = parts[0] || "";
+            startTime.value = parts[1] || "";
+        }
+
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
     // Go to specific step
     function goToStep(stepNumber) {
         // Update current step
@@ -827,60 +883,153 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Save as draft
-    function saveAsDraft() {
-        if (validateStep(currentStep)) {
-            // In a real app, this would save to backend
-            showNotification('Event saved as draft successfully', 'success');
-            
-            // Simulate API call
-            saveDraftBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-            saveDraftBtn.disabled = true;
-            
-            setTimeout(() => {
-                saveDraftBtn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
-                saveDraftBtn.disabled = false;
-            }, 2000);
+    async function saveAsDraft() {
+    if (!validateStep(currentStep)) return;
+
+    try {
+        saveDraftBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveDraftBtn.disabled = true;
+
+        const eventData = collectEventData("DRAFT");
+
+        let response;
+        const editEventId = localStorage.getItem("editEventId");
+        const isEditing = !!editEventId;
+
+        if (isEditing) {
+            response = await fetch(`${API_BASE}/organizer/events/${editEventId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token
+                },
+                body: JSON.stringify(eventData)
+            });
+
+            localStorage.removeItem("editEventId");
+
+        } else {
+            response = await fetch(`${API_BASE}/organizer/events`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token
+                },
+                body: JSON.stringify(eventData)
+            });
         }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        showNotification(
+            isEditing ? "Draft updated successfully" : "Event saved as draft successfully",
+            "success"
+        );
+
+    } catch (error) {
+        console.error(error);
+        showNotification("Failed to save draft", "error");
+    } finally {
+        saveDraftBtn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+        saveDraftBtn.disabled = false;
     }
+}
     
     // Publish event
-    function publishEvent() {
-        if (!validateStep(4)) {
-            goToStep(1);
-            return;
-        }
-        
-        // Get publishing option
-        const publishOptionValue = document.querySelector('input[name="publishOption"]:checked').value;
-        
-        // In a real app, this would submit to backend
+    async function publishEvent() {
+    if (!validateStep(4)) {
+        goToStep(1);
+        return;
+    }
+
+    try {
         publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
         publishBtn.disabled = true;
-        
+
+        const publishOptionValue = document.querySelector('input[name="publishOption"]:checked').value;
+
+        let status = "PUBLISHED";
+        if (publishOptionValue === "draft") {
+            status = "DRAFT";
+        }
+
+        const eventData = collectEventData(status);
+
+        let response;
+
+        // 🔵 If editing → UPDATE
+        const editEventId = localStorage.getItem("editEventId");
+        const isEditing = !!editEventId;
+        if (isEditing) {
+
+            response = await fetch(`${API_BASE}/organizer/events/${editEventId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token
+                },
+                body: JSON.stringify(eventData)
+            });
+
+            localStorage.removeItem("editEventId");
+
+        } else {
+
+            // 🟢 If new → CREATE
+            response = await fetch(`${API_BASE}/organizer/events`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token
+                },
+                body: JSON.stringify(eventData)
+            });
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Something went wrong");
+        }
+
+        showNotification(
+            isEditing ? "Event updated successfully!" : "Event created successfully!",
+            "success"
+        );
+
         setTimeout(() => {
-            let message = '';
-            switch(publishOptionValue) {
-                case 'publish':
-                    message = 'Event published successfully!';
-                    break;
-                case 'schedule':
-                    message = `Event scheduled for ${publishDate.value}`;
-                    break;
-                case 'draft':
-                    message = 'Event saved as draft';
-                    break;
-            }
-            
-            showNotification(message, 'success');
-            
-            publishBtn.innerHTML = '<i class="fas fa-rocket"></i> Published!';
-            
-            // In a real app, this would redirect to event page
-            setTimeout(() => {
-                window.location.href = 'myevents.html';
-            }, 1500);
-        }, 2000);
+            window.location.href = "org-myevents.html";
+        }, 1500);
+
+    } catch (error) {
+        console.error(error);
+        showNotification("Failed to publish event", "error");
+    } finally {
+        publishBtn.innerHTML = '<i class="fas fa-rocket"></i> Publish Event';
+        publishBtn.disabled = false;
     }
+}
+
+
+function collectEventData(status) {
+    return {
+        title: eventTitle.value.trim(),
+        description: eventDescription.value.trim(),
+        category: eventCategory.value,
+        date: `${startDate.value} ${startTime.value}`,
+        location: eventLocation.value.trim(),
+        status: status,
+        tickets: ticketTypes,
+        tags: tags,
+        capacity: eventCapacity.value,
+        format: eventFormat.value
+    };
+}
+
     
     // Handle window resize
     function handleResize() {

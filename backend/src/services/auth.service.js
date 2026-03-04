@@ -5,7 +5,7 @@ const dynamoDb = require("../config/dynamo");
 const TABLE = process.env.DYNAMO_TABLE;
 
 exports.registerUser = async (data) => {
-  const { email, password, role } = data;
+  const { name, email, phone, password, role } = data;
 
   // Check if user already exists (simple scan for now)
   const existing = await dynamoDb.scan({
@@ -27,7 +27,9 @@ exports.registerUser = async (data) => {
     TableName: TABLE,
     Item: {
       PK: userId,
+      name: name,
       email,
+      phone : phone || "",
       password: hashedPassword,
       role: role.toUpperCase(),
       createdAt: new Date().toISOString()
@@ -63,7 +65,18 @@ exports.loginUser = async (data) => {
   }
 
   const token = jwt.sign(
-    { userId: user.PK, role: user.role },
+    { 
+      userId: user.PK, 
+      role: user.role,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      company: user.company,
+      jobTitle: user.jobTitle,
+      bio: user.bio,
+      timezone: user.timezone, 
+      language: user.language
+    },
     process.env.JWT_SECRET,
     { expiresIn: "1h" }
   );
@@ -74,3 +87,81 @@ exports.loginUser = async (data) => {
     role: user.role
   };
 };
+
+exports.updateUserProfile = async (userId, data) => {
+  const {
+    name,
+    email,
+    phone,
+    company,
+    jobTitle,
+    bio,
+    timezone,
+    language
+  } = data;
+
+  await dynamoDb.update({
+    TableName: TABLE,
+    Key: { PK: userId },
+    UpdateExpression: `
+      SET #name = :name,
+          #email = :email,
+          #phone = :phone,
+          #company = :company,
+          #jobTitle = :jobTitle,
+          #bio = :bio,
+          #timezone = :timezone,
+          #language = :language
+    `,
+    ExpressionAttributeNames: {
+      "#name": "name",
+      "#email": "email",
+      "#phone": "phone",
+      "#company": "company",
+      "#jobTitle": "jobTitle",
+      "#bio": "bio",
+      "#timezone": "timezone",
+      "#language": "language"
+    },
+    ExpressionAttributeValues: {
+      ":name": name || "",
+      ":email": email || "",
+      ":phone": phone || "",
+      ":company": company || "",
+      ":jobTitle": jobTitle || "",
+      ":bio": bio || "",
+      ":timezone": timezone || "",
+      ":language": language || ""
+    }
+  }).promise();
+
+  const updatedUser = await dynamoDb.get({
+    TableName: TABLE,
+    Key: { PK: userId }
+  }).promise();
+
+  const user = updatedUser.Item;
+
+  const token = jwt.sign(
+    {
+      userId: user.PK,
+      role: user.role,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      company: user.company,
+      jobTitle: user.jobTitle,
+      bio: user.bio,
+      timezone: user.timezone,
+      language: user.language
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+
+  return {
+    token,
+    user
+  };
+};
+

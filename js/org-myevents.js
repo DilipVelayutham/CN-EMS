@@ -1,6 +1,16 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+    
+        const profileName = document.getElementById("profileName");
+        profileName.textContent = payload.name || payload.email || "User";
+
+    }
+
     // Elements
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const sidebar = document.getElementById('sidebar');
@@ -37,112 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const pageNumbers = document.querySelectorAll('.page-number');
     
     // Sample events data
-    const eventsData = [
-        {
-            id: 1,
-            title: 'Tech Conference 2024',
-            category: 'conference',
-            status: 'upcoming',
-            date: '2024-12-15',
-            time: '09:00 AM',
-            location: 'Convention Center',
-            attendees: 250,
-            tickets: 856,
-            revenue: '$12,580',
-            description: 'Annual technology conference featuring industry leaders'
-        },
-        {
-            id: 2,
-            title: 'Music Festival',
-            category: 'concert',
-            status: 'live',
-            date: '2024-12-10',
-            time: '05:00 PM',
-            location: 'Central Park',
-            attendees: 700,
-            tickets: 1500,
-            revenue: '$25,000',
-            description: 'Summer music festival with multiple stages'
-        },
-        {
-            id: 3,
-            title: 'AI Workshop',
-            category: 'workshop',
-            status: 'upcoming',
-            date: '2024-12-20',
-            time: '10:00 AM',
-            location: 'Tech Hub',
-            attendees: 120,
-            tickets: 120,
-            revenue: '$4,800',
-            description: 'Hands-on AI and machine learning workshop'
-        },
-        {
-            id: 4,
-            title: 'Startup Pitch Night',
-            category: 'meeting',
-            status: 'completed',
-            date: '2024-12-05',
-            time: '06:30 PM',
-            location: 'Innovation Center',
-            attendees: 85,
-            tickets: 100,
-            revenue: '$2,500',
-            description: 'Monthly startup pitch competition'
-        },
-        {
-            id: 5,
-            title: 'Web Development Bootcamp',
-            category: 'workshop',
-            status: 'live',
-            date: '2024-12-12',
-            time: '02:00 PM',
-            location: 'Online',
-            attendees: 150,
-            tickets: 200,
-            revenue: '$6,000',
-            description: 'Intensive web development training'
-        },
-        {
-            id: 6,
-            title: 'Marketing Summit',
-            category: 'conference',
-            status: 'upcoming',
-            date: '2024-12-25',
-            time: '08:00 AM',
-            location: 'Business Center',
-            attendees: 300,
-            tickets: 300,
-            revenue: '$15,000',
-            description: 'Digital marketing strategies and trends'
-        },
-        {
-            id: 7,
-            title: 'Product Launch',
-            category: 'meeting',
-            status: 'draft',
-            date: '2025-01-15',
-            time: '07:00 PM',
-            location: 'Showroom',
-            attendees: 0,
-            tickets: 0,
-            revenue: '$0',
-            description: 'New product unveiling event'
-        },
-        {
-            id: 8,
-            title: 'Charity Gala',
-            category: 'concert',
-            status: 'completed',
-            date: '2024-11-30',
-            time: '06:00 PM',
-            location: 'Grand Hotel',
-            attendees: 200,
-            tickets: 200,
-            revenue: '$10,000',
-            description: 'Annual charity fundraising event'
-        }
-    ];
+    let eventsData = [];
     
     // Current filters
     let currentFilters = {
@@ -162,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDateDisplay();
         
         // Load events
-        loadEvents();
+        fetchMyEvents();
         
         // Setup event listeners
         setupEventListeners();
@@ -183,6 +88,50 @@ document.addEventListener('DOMContentLoaded', function() {
         currentDate.textContent = now.toLocaleDateString('en-US', options);
     }
     
+    function updateSummary() {
+    const total = eventsData.length;
+
+    const upcoming = eventsData.filter(e => e.status === "PUBLISHED").length;
+    const draft = eventsData.filter(e => e.status === "DRAFT").length;
+
+    document.querySelectorAll(".summary-content h3")[0].textContent = total;
+    document.querySelectorAll(".summary-content h3")[1].textContent = upcoming;
+    document.querySelectorAll(".summary-content h3")[2].textContent = 0; // live future
+    document.querySelectorAll(".summary-content h3")[3].textContent = draft;
+}
+
+    async function fetchMyEvents() {
+    try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            showNotification("Please login again.");
+            return;
+        }
+
+        const response = await fetch("http://localhost:3000/organizer/events", {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to fetch events");
+        }
+
+        eventsData = data.events || [];
+
+        updateSummary();
+        loadEvents();
+
+    } catch (error) {
+        console.error("Fetch events error:", error);
+        showNotification("Error loading events");
+    }
+}
+
     // Load events with filters
     function loadEvents() {
         // Filter events
@@ -262,6 +211,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create event card element
     function createEventCard(event) {
+        // Safe defaults to prevent undefined
+        event.description = event.description || "No description provided";
+        event.location = event.location || "Location not specified";
+        event.date = event.date || "Date not set";
+        event.category = event.category || "General";
+        event.time = event.time || "Time not set";
+        event.attendees = event.attendees || 0;
+        event.revenue = event.revenue || 0;
+        event.tickets = event.tickets || 0;
+        event.tags = event.tags || [];
+        event.capacity = event.capacity || 0;
+
         const card = document.createElement('div');
         card.className = 'event-card';
         card.dataset.id = event.id;
@@ -277,7 +238,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get status class and text
         let statusClass = '';
         let statusText = '';
-        switch(event.status) {
+        let uiStatus = event.status;
+
+        if (event.status === "PUBLISHED") {
+            uiStatus = "upcoming";
+        }
+        if (event.status === "DRAFT") {
+            uiStatus = "draft";
+        }
+
+        switch(uiStatus) {
             case 'upcoming':
                 statusClass = 'status-upcoming';
                 statusText = 'Upcoming';
@@ -359,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="fas fa-eye"></i>
                     View
                 </button>
-                <button class="action-button edit" data-action="edit">
+                <button class="action-button edit" data-action="edit" onclick="editEvent('${event.eventId}')">
                     <i class="fas fa-edit"></i>
                     Edit
                 </button>
@@ -390,6 +360,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return card;
     }
     
+    
+
     // Handle event actions
     function handleEventAction(action, event) {
         switch(action) {
@@ -485,16 +457,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Delete event
-    function deleteEvent(event) {
-        if (confirm(`Are you sure you want to delete "${event.title}"?`)) {
-            showNotification(`Event "${event.title}" has been deleted`);
-            // In a real app, this would make an API call to delete the event
-            // Then reload the events
-            setTimeout(() => {
-                loadEvents();
-            }, 1000);
+    async function deleteEvent(event) {
+    if (!confirm(`Are you sure you want to delete "${event.title}"?`)) return;
+
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(
+            `http://localhost:3000/organizer/events/${event.eventId}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
         }
+
+        showNotification("Event deleted successfully");
+        fetchMyEvents();
+
+    } catch (error) {
+        console.error(error);
+        showNotification("Error deleting event");
     }
+}
+
     
     // Update pagination
     function updatePagination(totalEvents, totalPages) {
@@ -837,3 +830,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initMyEvents();
     handleResize();
 });
+
+function editEvent(eventId) {
+        localStorage.setItem("editEventId", eventId);
+        window.location.href = "org-createevent.html";
+    }

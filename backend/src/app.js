@@ -16,4 +16,7 @@ app.use("/auth", authRoutes);
 const adminAuthRoutes = require("./routes/admin.auth.routes");
 app.use("/admin/auth", adminAuthRoutes);
 
+const organizerRoutes = require("./routes/organizer.routes");
+app.use("/organizer", organizerRoutes);
+
 module.exports = app;

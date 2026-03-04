@@ -29,7 +29,7 @@
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="User">
             </div>
             <div class="user-info">
-                <h3>Alex Johnson</h3>
+                <h3 id="profileName">User</h3>
                 <p>Event Organizer</p>
             </div>
         </div>
@@ -38,10 +38,9 @@
             <li><a href="org-dashboard.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
             <li><a href="org-createevent.html"><i class="fas fa-calendar-plus"></i> Create Event</a></li>
             <li><a href="org-myevents.html"><i class="fas fa-calendar-week"></i> My Events</a></li>
-            <li><a href="org-categories.html"><i class="fas fa-tags"></i> Categories</a></li>
-            <li><a href="org-analytics.html"><i class="fas fa-chart-line"></i> Analytics</a></li>
             <li><a href="org-attendees.html"><i class="fas fa-users"></i> Attendees</a></li>
-            <li><a href="org-notifications.html"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="org-categories.html"><i class="fas fa-wrench"></i> Services</a></li>
+            <li><a href="org-notifications.html"><i class="fas fa-wifi"></i> Live Manage</a></li>
             <li><a href="org-settings.html"><i class="fas fa-cog"></i> Settings</a></li>
         </ul>
     </nav>
@@ -58,8 +57,8 @@
             <div class="top-actions">
                 <button class="action-btn"><i class="fas fa-search"></i></button>
                 <button class="action-btn"><i class="fas fa-bell"></i></button>
-                <button class="action-btn user-btn">
-                    <i class="fas fa-user"></i>
+                <button class="action-btn user-btn" id="logout">
+                    <i class="fas fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
             </div>
         </header>
@@ -71,7 +70,7 @@
                     <i class="fas fa-calendar-alt"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>12</h3>
+                    <h3 id="totalEvents">0</h3>
                     <p>Total Events</p>
                     <span class="trend up"><i class="fas fa-arrow-up"></i> 5%</span>
                 </div>
@@ -82,7 +81,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>1,247</h3>
+                    <h3 id="totalAttendees">0</h3>
                     <p>Total Attendees</p>
                     <span class="trend up"><i class="fas fa-arrow-up"></i> 12%</span>
                 </div>
@@ -93,7 +92,7 @@
                     <i class="fas fa-ticket-alt"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>856</h3>
+                    <h3 id="ticketsSold">0</h3>
                     <p>Tickets Sold</p>
                     <span class="trend up"><i class="fas fa-arrow-up"></i> 8%</span>
                 </div>
@@ -104,7 +103,7 @@
                     <i class="fas fa-dollar-sign"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>$12,580</h3>
+                    <h3 id="totalRevenue">$0</h3>
                     <p>Total Revenue</p>
                     <span class="trend down"><i class="fas fa-arrow-down"></i> 5%</span>
                 </div>
@@ -120,48 +119,7 @@
                         <h3>Upcoming Events</h3>
                         <a href="#" class="view-all">View All</a>
                     </div>
-                    <div class="card-body">
-                        <div class="event-item">
-                            <div class="event-icon">
-                                <i class="fas fa-laptop-code"></i>
-                            </div>
-                            <div class="event-details">
-                                <h4>Tech Conference 2024</h4>
-                                <p><i class="fas fa-clock"></i> Today, 2:00 PM</p>
-                            </div>
-                            <div class="event-attendees">
-                                <span>250</span>
-                                <small>attending</small>
-                            </div>
-                        </div>
-                        
-                        <div class="event-item">
-                            <div class="event-icon">
-                                <i class="fas fa-music"></i>
-                            </div>
-                            <div class="event-details">
-                                <h4>Music Festival</h4>
-                                <p><i class="fas fa-clock"></i> Tomorrow, 5:00 PM</p>
-                            </div>
-                            <div class="event-attendees">
-                                <span>700</span>
-                                <small>attending</small>
-                            </div>
-                        </div>
-                        
-                        <div class="event-item">
-                            <div class="event-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="event-details">
-                                <h4>AI Workshop</h4>
-                                <p><i class="fas fa-clock"></i> Jan 12, 10:00 AM</p>
-                            </div>
-                            <div class="event-attendees">
-                                <span>120</span>
-                                <small>attending</small>
-                            </div>
-                        </div>
+                    <div class="card-body" id="upcomingEventsContainer">
                     </div>
                 </div>
                 
@@ -201,22 +159,7 @@
                         <h3><i class="fas fa-broadcast-tower"></i> Live Now</h3>
                         <span class="live-badge">LIVE</span>
                     </div>
-                    <div class="card-body">
-                        <div class="live-event">
-                            <div class="live-details">
-                                <h4>Web Development Bootcamp</h4>
-                                <p>85 attending</p>
-                            </div>
-                            <span class="status-badge active">Active</span>
-                        </div>
-                        
-                        <div class="live-event">
-                            <div class="live-details">
-                                <h4>Startup Pitch Night</h4>
-                                <p>120 attending</p>
-                            </div>
-                            <span class="status-badge soon">Starting Soon</span>
-                        </div>
+                    <div class="card-body" id="liveEventsContainer">
                     </div>
                 </div>
                 

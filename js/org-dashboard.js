@@ -1,7 +1,35 @@
+const API_BASE = "http://localhost:3000";
+const token = localStorage.getItem("token");
+
+let dashboardEvents = [];
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     
     // Elements
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+    
+        const profileName = document.getElementById("profileName");
+        profileName.textContent = payload.name || payload.email || "User";
+
+    }
+
+    document.getElementById("logout").addEventListener("click", () => {
+        const confirmLogout = confirm("Do you want to logout?");
+
+        if (!confirmLogout) return;
+
+        // 🔥 Clear everything
+        localStorage.clear();
+        sessionStorage.clear(); // optional but good
+
+        // 🚀 Redirect to login
+        window.location.href = "auth.html";
+    });
+
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
@@ -21,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function initDashboard() {
         // Update date display
         updateDateDisplay();
+        fetchDashboardEvents();
         
         // Generate calendar
         generateCalendar();
@@ -32,6 +61,100 @@ document.addEventListener('DOMContentLoaded', function() {
         setInterval(updateDateDisplay, 60000);
     }
     
+    // Fetch events for dashboard
+    async function fetchDashboardEvents() {
+    try {
+        if (!token) {
+            showNotification("Please login again");
+            return;
+        }
+
+        const response = await fetch(`${API_BASE}/organizer/events`, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        dashboardEvents = data.events || [];
+
+        updateStats();
+        renderUpcomingEvents();
+        generateCalendar(); // refresh calendar with real event days
+        renderLiveEvents();
+
+    } catch (error) {
+        console.error(error);
+        showNotification("Failed to load dashboard data");
+    }
+}
+
+    function updateStats() {
+    document.getElementById("totalEvents").textContent = dashboardEvents.length;
+
+    // Placeholder until registration system built
+    document.getElementById("totalAttendees").textContent = 0;
+    document.getElementById("ticketsSold").textContent = 0;
+    document.getElementById("totalRevenue").textContent = "$0";
+}
+
+    function renderUpcomingEvents() {
+    const container = document.getElementById("upcomingEventsContainer");
+    container.innerHTML = "";
+
+    const upcoming = dashboardEvents
+        .filter(e => e.status === "PUBLISHED")
+        .slice(0, 3);
+
+    upcoming.forEach(event => {
+        const div = document.createElement("div");
+        div.className = "event-item";
+
+        div.innerHTML = `
+            <div class="event-icon">
+                <i class="fas fa-calendar"></i>
+            </div>
+            <div class="event-details">
+                <h4>${event.title}</h4>
+                <p><i class="fas fa-clock"></i> ${event.date || "Date not set"}</p>
+            </div>
+            <div class="event-attendees">
+                <span>0</span>
+                <small>attending</small>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+    function renderLiveEvents() {
+    const container = document.getElementById("liveEventsContainer");
+    container.innerHTML = "";
+
+    const live = dashboardEvents.filter(e => e.status === "PUBLISHED");
+
+    live.slice(0, 2).forEach(event => {
+        const div = document.createElement("div");
+        div.className = "live-event";
+
+        div.innerHTML = `
+            <div class="live-details">
+                <h4>${event.title}</h4>
+                <p>0 attending</p>
+            </div>
+            <span class="status-badge active">Active</span>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
     // Update date display
     function updateDateDisplay() {
         const now = new Date();
@@ -75,7 +198,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add days of the month
         const today = new Date();
-        const eventDays = [5, 12, 15, 20, 25]; // Example event days
+        const eventDays = dashboardEvents.map(e => {
+    if (!e.date) return null;
+    const d = new Date(e.date);
+    return d.getDate();
+}).filter(Boolean);
+ // Example event days
         
         for (let day = 1; day <= daysInMonth; day++) {
             const dayEl = document.createElement('div');

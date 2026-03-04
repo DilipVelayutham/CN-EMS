@@ -1,7 +1,25 @@
+const API_BASE_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === ""
+    ? "http://localhost:3000"
+    : "https://wzer1y5y48.execute-api.eu-north-1.amazonaws.com/dev";
+
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Elements
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+    
+        const profileName = document.getElementById("profileName");
+        const profileName1 = document.getElementById("profileName1");
+        profileName.textContent = payload.name || payload.email || "User";
+        profileName1.textContent = payload.name || payload.email || "User";
+
+    }
+    // Elements 
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
@@ -28,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const bio = document.getElementById('bio');
     const timezone = document.getElementById('timezone');
     const language = document.getElementById('language');
-    
+
     // Account section
     const upgradePlanBtn = document.getElementById('upgradePlanBtn');
     const exportDataBtn = document.getElementById('exportDataBtn');
@@ -152,21 +170,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load saved settings from localStorage
     function loadSettings() {
-        const savedSettings = localStorage.getItem('eventoSettings');
-        if (savedSettings) {
-            settingsData = JSON.parse(savedSettings);
-            applySettingsToUI();
+
+        if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+
+            if (payload.name) {
+                const nameParts = payload.name.split(" ");
+                firstName.value = nameParts[0] || "";
+                lastName.value = nameParts.slice(1).join(" ") || "";
+            }
+            email.value = payload.email || "";
+            phone.value = payload.phone || "";
+            company.value = payload.company || "";
+            jobTitle.value = payload.jobTitle || "";
+            bio.value = payload.bio || "";
+            timezone.value = payload.timezone || "";
+            language.value = payload.language || "";
+
         } else {
             // Set default settings
             settingsData = {
                 profile: {
-                    firstName: 'Alex',
-                    lastName: 'Johnson',
-                    email: 'alex.johnson@example.com',
-                    phone: '+1 (555) 123-4567',
-                    company: 'EventPro Solutions',
+                    firstName: 'User',
+                    lastName: '',
+                    email: 'Enter your email',
+                    phone: 'Enter your phone number',
+                    company: 'Enter your company',
                     jobTitle: 'Event Organizer',
-                    bio: 'Experienced event organizer with over 5 years of experience managing large-scale conferences, music festivals, and corporate events. Passionate about creating memorable experiences for attendees.',
+                    bio: 'Enter a short bio about yourself (Max 150 characters)',
                     timezone: 'America/New_York',
                     language: 'en',
                     avatar: 'Alex'
@@ -582,10 +613,50 @@ document.addEventListener('DOMContentLoaded', function() {
         changeAvatarBtn.addEventListener('click', changeAvatar);
         removeAvatarBtn.addEventListener('click', removeAvatar);
         
-        profileForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveSettings();
+       profileForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("http://localhost:3000/auth/profile", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token
+            },
+            body: JSON.stringify({
+                name: firstName.value.trim() + " " + lastName.value.trim(),
+                email: email.value.trim(),
+                phone: phone.value.trim(),
+                company: company.value.trim(),
+                jobTitle: jobTitle.value.trim(),
+                bio: bio.value.trim(),
+                timezone: timezone.value,
+                language: language.value
+            })
         });
+
+        const data = await response.json();
+
+        console.log("Response:", data);  // 🔥 DEBUG
+
+        if (!response.ok) {
+            throw new Error(data.message || "Update failed");
+        }
+
+        // 🔥 Replace token
+        localStorage.setItem("token", data.token);
+
+        showToast("Profile updated successfully!");
+
+    } catch (error) {
+        console.error(error);
+        showToast("Profile update failed!");
+    }
+});
+
+
         
         cancelProfileBtn.addEventListener('click', function() {
             applySettingsToUI();

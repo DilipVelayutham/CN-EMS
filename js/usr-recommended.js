@@ -32,8 +32,102 @@ document.addEventListener('DOMContentLoaded', function() {
     const recommendationCards = document.querySelectorAll('.recommendation-card');
     
     // Initialize recommendations page
+    fetchEvents();
     initRecommendationsPage();
+
+    async function fetchEvents() {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("https://wzer1y5y48.execute-api.eu-north-1.amazonaws.com/dev/api/events/register", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const events = await response.json();
+
+            renderEvents(events);
+
+        } catch (error) {
+            console.error("Error fetching events:", error);
+        }
+    }   
     
+    function renderEvents(events) {
+        const container = document.getElementById("eventsContainer");
+        container.innerHTML = "";
+
+        events.forEach(event => {
+
+            const eventCard = `
+                <div class="recommendation-card">
+                    <div class="event-details">
+                        <h4>${event.title}</h4>
+                        <p class="event-description">${event.description}</p>
+
+                        <div class="event-info">
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>${event.date}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${event.location}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-tag"></i>
+                                <span class="price">$${event.price}</span>
+                            </div>
+                        </div>
+
+                        <button class="btn-book-now" 
+                            onclick="registerEvent('${event.eventId}')">
+                            Register
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML += eventCard;
+        });
+    }
+
+    async function registerEvent(eventId) {
+        try {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                alert("You must login first");
+                return;
+            }
+
+            const response = await fetch(
+                "https://wzer1y5y48.execute-api.eu-north-1.amazonaws.com/dev/api/events/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ eventId })
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message);
+            }
+
+            const data = await response.json();
+            alert(data.message);
+
+        } catch (error) {
+            console.error("Registration failed:", error);
+            alert(error.message);
+        }
+    }
+
     function initRecommendationsPage() {
         // Setup event listeners
         setupEventListeners();

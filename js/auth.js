@@ -329,9 +329,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitBtn = this.querySelector(".submit-btn");
         submitBtn.classList.add("loading");
 
+        const firstName = document.getElementById("firstName").value.trim();
+        const lastName = document.getElementById("lastName").value.trim();
         const payload = {
-            firstName: document.getElementById("firstName").value.trim(),
-            lastName: document.getElementById("lastName").value.trim(),
+            name: firstName + " " + lastName,
             email: document.getElementById("signupEmail").value.trim(),
             phone: document.getElementById("countryCode").value +
                document.getElementById("phoneNumber").value.trim(),
@@ -468,4 +469,4 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize
     updatePasswordRequirements('');
-});
+});     
